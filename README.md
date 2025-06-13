@@ -16,7 +16,7 @@ irm https://astral.sh/uv/install.ps1 | iex
 
 ## 基本使用方法 (Basic Usage)
 
-"""bash
+```bash
 uv sync
 uv run main.py
-"""
+```
