@@ -81,7 +81,7 @@ with mss.mss() as sct:
 
         threshold = 0.8
         if max_val >= threshold:
-            # print(f"✅ 偵測到圖案！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            print(f"✅ 偵測到圖案！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             logger.info(f"偵測到圖案！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             # 點擊位置（視窗起點 + 匹配點 + 模板中心）
             click_x = left + max_loc[0] + template_w // 2
@@ -102,7 +102,7 @@ with mss.mss() as sct:
 
         else:
             # print(f"未偵測到圖案, 相似度 {max_val}")
-            logger.debug(f"未偵測到圖案, 視窗位置 : {left, top, right, bottom}, 相似度 {max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            logger.info(f"未偵測到圖案, 視窗位置 : {left, top, right, bottom}, 相似度 {max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             ...
 
         time.sleep(5)
