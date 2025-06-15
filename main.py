@@ -73,10 +73,12 @@ with mss.mss() as sct:
         screenshot_gray = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2GRAY)
 
         cv2.imwrite('img.png', screenshot_gray)
+        # print(screenshot_gray.shape)
+        screenshot_gray = cv2.resize(screenshot_gray, (1080, 664), interpolation=cv2.INTER_CUBIC)
+        # print(screenshot_gray.shape)
 
         # 模板匹配
         res = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
-        res = cv2.resize(res, (1021, 607), interpolation=cv2.INTER_CUBIC)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
         threshold = 0.8
