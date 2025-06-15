@@ -21,9 +21,15 @@ import win32gui
 
 logger = logging.getLogger(__name__)
 # 載入模板圖像
+
 filename = 'template.png'
-if hasattr(sys, '_MEIPASS'):
-    filename = os.path.join(sys._MEIPASS, filename)
+if os.path.exists(filename):
+    print(f"✅ 成功載入模板圖像：{filename}") 
+else:
+    if hasattr(sys, '_MEIPASS'):
+        filename = os.path.join(sys._MEIPASS, filename)
+        print(f"✅ 'template.png'不存在，用預設模板圖像") 
+
 template = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
 template_w, template_h = template.shape[::-1]
 
@@ -84,8 +90,8 @@ with mss.mss() as sct:
 
         threshold = 0.8
         if max_val >= threshold:
-            print(f"✅ 偵測到圖案！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-            logger.info(f"偵測到圖案！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}, 縮放比例: {increase_ratio:.2f}")
+            print(f"✅ 偵測到寶箱！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            logger.info(f"偵測到寶箱！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}, 縮放比例: {increase_ratio:.2f}")
             # 點擊位置（視窗起點 + 匹配點 + 模板中心）
             click_x = left + (max_loc[0] + template_w // 2) / increase_ratio
             click_y = top  + (max_loc[1] + template_h // 2) / increase_ratio       # 記錄當前滑鼠位置
@@ -95,17 +101,22 @@ with mss.mss() as sct:
             pyautogui.click(click_x, click_y)
             pyautogui.click(click_x, click_y)
             pyautogui.click(click_x, click_y)
-            time.sleep(0.5)
+            time.sleep(0.1)
             pyautogui.click(click_x, click_y)
             pyautogui.click(click_x, click_y)
             pyautogui.click(click_x, click_y)
+            time.sleep(0.1)
+            pyautogui.click(click_x, click_y)
+            pyautogui.click(click_x, click_y)
+            pyautogui.click(click_x, click_y)
+
             # 回到原位
             pyautogui.moveTo(original_pos)
             time.sleep(5)
 
         else:
             # print(f"未偵測到圖案, 相似度 {max_val}")
-            logger.info(f"未偵測到圖案, 視窗位置 : {left, top, right, bottom}, 相似度 {max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}, 縮放比例: {increase_ratio:.2f}")
+            logger.info(f"未偵測到寶箱, 視窗位置 : {left, top, right, bottom}, 相似度 {max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}, 縮放比例: {increase_ratio:.2f}")
             ...
 
         time.sleep(5)
