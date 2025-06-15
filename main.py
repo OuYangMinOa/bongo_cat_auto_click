@@ -72,10 +72,11 @@ with mss.mss() as sct:
         screenshot = np.array(sct.grab(monitor))
         screenshot_gray = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2GRAY)
 
+        # print(screenshot_gray.shape)
+        old_X  = screenshot_gray.shape[1]
+        screenshot_gray = cv2.resize(screenshot_gray, (664 ,1080), interpolation=cv2.INTER_LANCZOS4)
+        increase_ratio = screenshot_gray.shape[1] / old_X # 計算寬度縮放比例
         cv2.imwrite('img.png', screenshot_gray)
-        # print(screenshot_gray.shape)
-        screenshot_gray = cv2.resize(screenshot_gray, (1080, 664), interpolation=cv2.INTER_CUBIC)
-        # print(screenshot_gray.shape)
 
         # 模板匹配
         res = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
@@ -84,10 +85,10 @@ with mss.mss() as sct:
         threshold = 0.8
         if max_val >= threshold:
             print(f"✅ 偵測到圖案！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-            logger.info(f"偵測到圖案！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            logger.info(f"偵測到圖案！位置：{max_loc}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}, 縮放比例: {increase_ratio:.2f}")
             # 點擊位置（視窗起點 + 匹配點 + 模板中心）
-            click_x = left + max_loc[0] + template_w // 2
-            click_y = top + max_loc[1] + template_h // 2        # 記錄當前滑鼠位置
+            click_x = left + (max_loc[0] + template_w // 2) / increase_ratio
+            click_y = top  + (max_loc[1] + template_h // 2) / increase_ratio       # 記錄當前滑鼠位置
             original_pos = pyautogui.position()
 
             # 點擊
@@ -104,7 +105,7 @@ with mss.mss() as sct:
 
         else:
             # print(f"未偵測到圖案, 相似度 {max_val}")
-            logger.info(f"未偵測到圖案, 視窗位置 : {left, top, right, bottom}, 相似度 {max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            logger.info(f"未偵測到圖案, 視窗位置 : {left, top, right, bottom}, 相似度 {max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}, 縮放比例: {increase_ratio:.2f}")
             ...
 
         time.sleep(5)
