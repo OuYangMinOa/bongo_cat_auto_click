@@ -10,3 +10,8 @@ dependencies = [
     "pyautogui>=0.9.54",
     "pywin32>=310",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+]
