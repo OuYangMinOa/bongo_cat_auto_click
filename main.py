@@ -7,19 +7,26 @@ import sys
 import cv2
 import mss
 import logging
-# 設定日誌
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("app.log"),
-    ]
-)
+from logging.handlers import RotatingFileHandler
+
 import numpy as np
 import pyautogui
 import win32gui
 
+# 設定日誌
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG) # 設定 logger 的級別
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+file_handler = RotatingFileHandler(
+    'app.log',
+    maxBytes=1024*1024*5, # 5 MB
+    backupCount=5,
+    encoding='utf-8' # 建議加上編碼，避免中文亂碼
+)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 # 載入模板圖像
 
 ratio_list = [2,1.75,1.5,1.25,1,0.75,0.5]
