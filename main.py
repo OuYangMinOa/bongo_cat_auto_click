@@ -37,7 +37,10 @@ if os.path.exists(filename):
 else:
     if hasattr(sys, '_MEIPASS'):
         filename = os.path.join(sys._MEIPASS, filename)
-        print(f"✅ 'template.png'不存在，用預設模板圖像") 
+        if os.path.exists(filename):
+            print(f"✅ 成功載入打包後的模板圖像：{filename}")
+        else:
+            print(f"✅ 'template.png'不存在，用預設模板圖像") 
 
 template = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
 template_w, template_h = template.shape[::-1]
@@ -116,7 +119,7 @@ with mss.mss() as sct:
             time.sleep(5)
 
         else:
-            print(f"未偵測到圖案, 相似度 {max_val}")
+            # print(f"未偵測到圖案, 相似度 {max_val}")
             logger.info(f"未偵測到寶箱, 視窗位置 : {left, top, right, bottom}, 相似度 {max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             ...
 
