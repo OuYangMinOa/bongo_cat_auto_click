@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "magicgui[pyqt5]>=0.10.1",
     "mss>=10.0.0",
     "opencv-python>=4.11.0.86",
     "pyautogui>=0.9.54",
