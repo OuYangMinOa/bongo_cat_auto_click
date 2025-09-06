@@ -40,6 +40,7 @@ class Application:
     template_h          = None
 
     def __init__(self):
+        self.alive = True
         self.setup_template()
 
     def setup_template(self):
@@ -57,7 +58,7 @@ class Application:
             if hwnd is None:
                 self.logger.error(f"找不到視窗: {self.target_window_title}")
                 return
-            while True:
+            while self.alive:
                 hwnd = ut.find_window_by_title(self.target_window_title)
                 if hwnd is None:
                     print("❌ 找不到視窗")

@@ -1,3 +1,4 @@
+from typing import Literal
 import os
 import threading
 
@@ -8,15 +9,25 @@ from src.app import Application, Config
 os.environ['QT_SCALE_FACTOR'] = '2' 
 from magicgui import magicgui
 
-
+app = Application()
 @magicgui(call_button = "設定", result_widget=True, labels = True, tooltips = True)
 def gui(
+    開關             : Literal['開', '關'] = '開',
     截圖間隔時間      : float = 5, # 秒
     threshold       : float = 0.8,
     滑鼠移動時間      : float = 0.7,
     點擊次數          : int  = 5,
     點擊間隔時間      : float = 0.5,
     是否要回到滑鼠原處 : bool  = True):
+
+    alive_str = None
+    if 開關 == '開' and app.alive == False: 
+        app.alive = True
+        threading.Thread(target=app.loop_capture, daemon=True).start()
+        alive_str = "✅ 程式已啟動"
+    elif 開關 == '關' and app.alive == True:
+        app.alive = False
+        alive_str = "❌ 程式已停止"
     
     Config.screenshot_interval   = 截圖間隔時間
     Config.match_threshold       = threshold
@@ -24,13 +35,11 @@ def gui(
     Config.click_time            = 點擊次數
     Config.click_interval        = 點擊間隔時間
     Config.back_2_original_pos   = 是否要回到滑鼠原處
-
-    print("✅ 設定已更新")
-
-    return f"""✅ 設定已更新"""
+    if alive_str is not None:
+        return alive_str
+    return f"""🔄️ 設定已更新"""
 
 def main():
-    app = Application()
     threading.Thread(target=app.loop_capture, daemon=True).start()
     gui.show(run=True)
 
