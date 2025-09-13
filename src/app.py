@@ -26,12 +26,13 @@ class Config:
     click_time          : int   = 5        
     click_interval      : float = 0.5          # 點擊間隔時間（秒）
     back_2_original_pos : bool  = True         # 點擊後返回原位置
-
+    offset_x            : float = 0.0
+    offset_y            : float = 0.0
     # @magicgui(call_button="calculate")
     # def GUI()
 
 
-class Application:
+class Apppplication:
     ratio_list          = [2,1.75,1.5,1.25,1,0.75,0.5]
     template_list       = []
     target_window_title = "BongoCat"
@@ -77,8 +78,8 @@ class Application:
                 # 模板匹配
                 max_val, max_loc = ut.get_max_match_template(self.template_list, screenshot_gray)
                 if max_val >= Config.match_threshold:
-                    click_x = left + (max_loc[0] + self.template_w // 2) 
-                    click_y = top  + (max_loc[1] + self.template_h // 2) 
+                    click_x = left + (max_loc[0] + self.template_w // 2) + Config.offset_x
+                    click_y = top  + (max_loc[1] + self.template_h // 2) + Config.offset_y
                     self.logger.info(f"偵測到寶箱！位置：{(click_x,click_y)}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
                     print(f"✅ 偵測到寶箱！位置：{(click_x,click_y)}, 相似度：{max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
                     original_pos = pyautogui.position()

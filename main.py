@@ -5,12 +5,15 @@ import threading
 import magicgui
 
 from src.app import Application, Config
+echo 'eval "$(oh-my-posh init bash --config ~/.config/nvim/myarmo.json)"' >> ~/.bashrc
 
 os.environ['QT_SCALE_FACTOR'] = '2' 
 from magicgui import magicgui
 
 app = Application()
-@magicgui(call_button = "設定", result_widget=True, labels = True, tooltips = True)
+@magicgui(call_button = "設定", result_widget=True, labels = True, tooltips = True,
+          x點擊偏移 = {"widget_type": "LogSlider", "max": 200, "min": -200, "tracking": False},
+          y點擊偏移 = {"widget_type": "LogSlider", "max": 200, "min": -200, "tracking": False})
 def gui(
     開關             : Literal['開', '關'] = '開',
     截圖間隔時間      : float = 5, # 秒
@@ -18,7 +21,9 @@ def gui(
     滑鼠移動時間      : float = 0.7,
     點擊次數          : int  = 5,
     點擊間隔時間      : float = 0.5,
-    是否要回到滑鼠原處 : bool  = True):
+    是否要回到滑鼠原處 : bool  = True,
+    x點擊偏移 : float = 0,
+    y點擊偏移 : float = 0):
 
     alive_str = None
     if 開關 == '開' and app.alive == False: 
