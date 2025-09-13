@@ -5,7 +5,6 @@ import threading
 import magicgui
 
 from src.app import Application, Config
-echo 'eval "$(oh-my-posh init bash --config ~/.config/nvim/myarmo.json)"' >> ~/.bashrc
 
 os.environ['QT_SCALE_FACTOR'] = '2' 
 from magicgui import magicgui
