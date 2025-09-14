@@ -1,13 +1,8 @@
-from typing import Literal
-import os
 import threading
-
-import magicgui
-
-from src.app import Application, Config
-
-os.environ['QT_SCALE_FACTOR'] = '2' 
+from typing import Literal
 from magicgui import magicgui
+from src.app import Application, Config
+logic_app = Application()
 
 app = Application()
 @magicgui(call_button = "設定", result_widget=True, labels = True, tooltips = True,
@@ -15,7 +10,7 @@ app = Application()
           y點擊偏移 = {"widget_type": "LogSlider", "max": 200, "min": -200, "tracking": False})
 def gui(
     開關             : Literal['開', '關'] = '開',
-    截圖間隔時間      : float = 5, # 秒
+    截圖間隔時間     : float = 5, # 秒
     threshold       : float = 0.8,
     滑鼠移動時間      : float = 0.7,
     點擊次數          : int  = 5,
@@ -25,12 +20,12 @@ def gui(
     y點擊偏移 : float = 0):
 
     alive_str = None
-    if 開關 == '開' and app.alive == False: 
-        app.alive = True
-        threading.Thread(target=app.loop_capture, daemon=True).start()
+    if 開關 == '開' and logic_app.alive == False: 
+        logic_app.alive = True
+        threading.Thread(target=logic_app.loop_capture, daemon=True).start()
         alive_str = "✅ 程式已啟動"
-    elif 開關 == '關' and app.alive == True:
-        app.alive = False
+    elif 開關 == '關' and logic_app.alive == True:
+        logic_app.alive = False
         alive_str = "❌ 程式已停止"
     
     Config.screenshot_interval   = 截圖間隔時間
@@ -44,7 +39,8 @@ def gui(
     return f"""🔄️ 設定已更新"""
 
 def main():
-    threading.Thread(target=app.loop_capture, daemon=True).start()
+    # 【程式邏輯修正】這裡應該使用 logic_app
+    threading.Thread(target=logic_app.loop_capture, daemon=True).start()
     gui.show(run=True)
 
 if __name__ == "__main__":
