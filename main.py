@@ -5,9 +5,12 @@ from src.app import Application, Config
 logic_app = Application()
 
 app = Application()
-@magicgui(call_button = "設定", result_widget=True, labels = True, tooltips = True,
-          x點擊偏移 = {"widget_type": "LogSlider", "max": 200, "min": -200, "tracking": False},
-          y點擊偏移 = {"widget_type": "LogSlider", "max": 200, "min": -200, "tracking": False})
+this_magicgui = magicgui(call_button = "設定", result_widget=True, labels = True, tooltips = True,
+          x點擊偏移 = {"widget_type": "Slider", "max": 50, "min": -50, "step": 0.25},
+          y點擊偏移 = {"widget_type": "Slider", "max": 50, "min": -50, "step": 0.25},
+          )
+
+@this_magicgui
 def gui(
     開關             : Literal['開', '關'] = '開',
     截圖間隔時間     : float = 5, # 秒
@@ -16,8 +19,8 @@ def gui(
     點擊次數          : int  = 5,
     點擊間隔時間      : float = 0.5,
     是否要回到滑鼠原處 : bool  = True,
-    x點擊偏移 : float = 0,
-    y點擊偏移 : float = 0):
+    x點擊偏移 : int = 0,
+    y點擊偏移 : int = 0):
 
     alive_str = None
     if 開關 == '開' and logic_app.alive == False: 
@@ -34,6 +37,8 @@ def gui(
     Config.click_time            = 點擊次數
     Config.click_interval        = 點擊間隔時間
     Config.back_2_original_pos   = 是否要回到滑鼠原處
+    Config.offset_x              = x點擊偏移
+    Config.offset_y              = y點擊偏移
     if alive_str is not None:
         return alive_str
     return f"""🔄️ 設定已更新"""

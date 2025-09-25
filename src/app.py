@@ -23,16 +23,16 @@ class Config:
     screenshot_interval : float = 0.1          # 截圖間隔時間（秒）
     match_threshold     : float = 0.8          # 模板匹配閾值
     move_duration       : float = 0.7          # 移動到目標位置的時間（秒）
-    click_time          : int   = 5        
+    click_time          : int   = 5
     click_interval      : float = 0.5          # 點擊間隔時間（秒）
     back_2_original_pos : bool  = True         # 點擊後返回原位置
-    offset_x            : float = 0.0
-    offset_y            : float = 0.0
+    offset_x            : int   = 0
+    offset_y            : int   = 0
     # @magicgui(call_button="calculate")
     # def GUI()
 
 
-class Apppplication:
+class Application:
     ratio_list          = [2,1.75,1.5,1.25,1,0.75,0.5]
     template_list       = []
     target_window_title = "BongoCat"
