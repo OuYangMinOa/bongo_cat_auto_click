@@ -2,12 +2,13 @@ from typing import Optional
 
 import numpy as np
 import win32gui
+import json
 import cv2
 import sys
 import os
 
-def get_template_filenmae() -> str:
-    filename      = 'template2.png'
+def get_template_filename(num : int = 2) -> str:
+    filename      = f'template{num}.png'
     if os.path.exists(filename):
         print(f"✅ 成功載入模板圖像：{filename}") 
     else:
@@ -18,6 +19,7 @@ def get_template_filenmae() -> str:
             else:
                 print(f"✅ 'template.png'不存在，用預設模板圖像") 
     return filename
+
 
 def find_window_by_title(title_keyword : str) -> Optional[int]:
     matched_hwnd = None
@@ -45,3 +47,5 @@ def get_max_match_template(template_list : list[np.ndarray], screenshot_gray : n
             max_val = current_max_val
             max_loc = current_max_loc
     return max_val, max_loc
+
+

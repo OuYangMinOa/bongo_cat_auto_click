@@ -21,3 +21,10 @@ uv run --no-dev main.py
 ```
 
 ![alt text](image.png)
+
+
+## PyInstaller
+
+```bash
+uv run pyinstaller -F --hidden-import magicgui.backends._qtpy --add-data ".\template3.png:." --add-data ".\template4.png:." .\main.py 
+```
