@@ -27,6 +27,7 @@ class Config:
     back_2_original_pos : bool  = True         # 點擊後返回原位置
     offset_x            : int   = 0
     offset_y            : int   = 0
+    stable_time        : float  = 30          # 滑鼠穩定時間（秒）
 
     @classmethod
     def save(cls, filename : str):
@@ -82,7 +83,8 @@ class TemplateInfo:
 
 class Application:
     
-    ratio_list          : list[float]        = [2,1.75,1.5,1.25,1,0.75,0.5]
+    ratio_list          : list[float]        = [2, 1.875, 1.75, 1.625, 1.5, 1.375,
+                                                1.25, 1.125, 1, 0.75, 0.625, 0.5]
     template_info_list  : list[TemplateInfo] = []
     target_window_title : str                = "BongoCat"
     logger              = MyLog.get_logger()
@@ -111,6 +113,21 @@ class Application:
                     max_template_idx = idx
         return max_val, max_loc, max_template_idx
     
+    def _wait_until_mouse_stable(self, stable_time : float = Config.stable_time, check_interval : float = 0.1):
+        last_pos = pyautogui.position()
+        stable_start_time = time.time()
+        while True:
+            time.sleep(check_interval)
+            current_pos = pyautogui.position()
+            if current_pos == last_pos:
+                if time.time() - stable_start_time >= 0.5:
+                    break
+            else:
+                print("⏸️ 偵測到滑鼠移動，等待穩定中...")
+                last_pos = current_pos
+                stable_start_time = time.time()
+                time.sleep(stable_time)
+
     def loop_capture(self):
         with mss.mss() as sct:
             hwnd = ut.find_window_by_title(self.target_window_title)
@@ -134,6 +151,7 @@ class Application:
                 screenshot_gray = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2GRAY)
                 cv2.imwrite('img.png', screenshot_gray)
                 # 模板匹配
+                self._wait_until_mouse_stable()
                 max_val, max_loc, idx = self.get_max_match_template(screenshot_gray)
                 template_info = self.template_info_list[idx]
                 if max_val >= Config.match_threshold:
