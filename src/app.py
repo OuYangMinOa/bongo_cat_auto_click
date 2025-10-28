@@ -80,10 +80,9 @@ class TemplateInfo:
             self.template_list.append(resized_template)
         self.w, self.h = template.shape[::-1]
 
-
 class Application:
     
-    ratio_list          : list[float]        = [2, 1.875, 1.75, 1.625, 1.5, 1.375,
+    ratio_list          : list[float]        = [4,3,2, 1.875, 1.75, 1.625, 1.5, 1.375,
                                                 1.25, 1.125, 1, 0.75, 0.625, 0.5]
     template_info_list  : list[TemplateInfo] = []
     target_window_title : str                = "BongoCat"
@@ -114,9 +113,9 @@ class Application:
         return max_val, max_loc, max_template_idx
     
     def _wait_until_mouse_stable(self, stable_time : float = Config.stable_time, check_interval : float = 0.1):
-        last_pos = pyautogui.position()
         stable_start_time = time.time()
         while True:
+            last_pos = pyautogui.position()
             time.sleep(check_interval)
             current_pos = pyautogui.position()
             if current_pos == last_pos:
@@ -127,6 +126,7 @@ class Application:
                 last_pos = current_pos
                 stable_start_time = time.time()
                 time.sleep(stable_time)
+        print("✅ 滑鼠已穩定，繼續執行程式。")
 
     def loop_capture(self):
         with mss.mss() as sct:
