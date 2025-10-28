@@ -16,6 +16,7 @@ import win32gui
 import src.utils as ut
 from src.logger import MyLog
 
+import sys
 
 class Config: 
     target_window_title : str   = "BongoCat"
@@ -92,6 +93,7 @@ class Application:
         self.alive = True
         self.setup_template_by_num(3)
         self.setup_template_by_num(4)
+        self.setup_template_by_num(5)
 
     def setup_template_by_num(self, num : int = 1):
         filename = ut.get_template_filename(num = num)
@@ -112,21 +114,28 @@ class Application:
                     max_template_idx = idx
         return max_val, max_loc, max_template_idx
     
-    def _wait_until_mouse_stable(self, stable_time : float = Config.stable_time, check_interval : float = 0.1):
-        stable_start_time = time.time()
+    def _wait_until_mouse_stable(self, stable_time : float = Config.stable_time, check_interval : float = 0.5):
+        moving = False
         while True:
             last_pos = pyautogui.position()
             time.sleep(check_interval)
             current_pos = pyautogui.position()
             if current_pos == last_pos:
-                if time.time() - stable_start_time >= 0.5:
-                    break
+                break
             else:
-                print("⏸️ 偵測到滑鼠移動，等待穩定中...")
-                last_pos = current_pos
-                stable_start_time = time.time()
-                time.sleep(stable_time)
-        print("✅ 滑鼠已穩定，繼續執行程式。")
+                moving = True
+                print("⏸️  偵測到滑鼠移動，等待穩定中...")
+                timer = 0
+                while timer <= stable_time:
+                    timer += 0.1
+                    # print(f"⏸️  滑鼠穩定倒數: {stable_time - timer} 秒", end='\r')
+                    if Config.screenshot_interval - timer >= 0:
+                        sys.stdout.write(f"\r⏸️  滑鼠穩定倒數: {stable_time - timer:.1f} 秒")
+                        sys.stdout.flush()
+                    time.sleep(0.1)
+                print()
+        if moving:
+            print("✅ 滑鼠已穩定，繼續執行程式。")
 
     def loop_capture(self):
         with mss.mss() as sct:
@@ -150,8 +159,8 @@ class Application:
                 screenshot = np.array(sct.grab(monitor))
                 screenshot_gray = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2GRAY)
                 cv2.imwrite('img.png', screenshot_gray)
-                # 模板匹配
                 self._wait_until_mouse_stable()
+                # 模板匹配
                 max_val, max_loc, idx = self.get_max_match_template(screenshot_gray)
                 template_info = self.template_info_list[idx]
                 if max_val >= Config.match_threshold:
@@ -169,4 +178,14 @@ class Application:
                 else:
                     # print(f"未偵測到圖案, 相似度 {max_val}")
                     self.logger.info(f"未偵測到寶箱, 視窗位置 : {left, top, right, bottom}, 相似度 {max_val:.2f}, 時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-                time.sleep(Config.screenshot_interval)
+                # time.sleep(Config.screenshot_interval)
+                timer = 0
+                while timer <= Config.screenshot_interval:
+                    if not self.alive:
+                        break
+                    time.sleep(0.1)
+                    timer += 0.1
+                    if Config.screenshot_interval - timer >= 0:
+                        sys.stdout.write(f"\r⏱️  下一次截圖倒數: {Config.screenshot_interval - timer:.1f} 秒")
+                        sys.stdout.flush()
+                sys.stdout.write("\r" + " " * 50 + "\r")

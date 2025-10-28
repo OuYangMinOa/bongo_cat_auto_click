@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('.\\template3.png', '.'), ('.\\template4.png', '.')],
+    datas=[('.\\template3.png', '.'), ('.\\template4.png', '.'), ('.\\template5.png', '.')],
     hiddenimports=['magicgui.backends._qtpy'],
     hookspath=[],
     hooksconfig={},
