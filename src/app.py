@@ -41,7 +41,8 @@ class Config:
             "click_interval"     : cls.click_interval,
             "back_2_original_pos": cls.back_2_original_pos,
             "offset_x"           : cls.offset_x,
-            "offset_y"           : cls.offset_y
+            "offset_y"           : cls.offset_y,
+            "stable_time"        : cls.stable_time,
         }
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(config_dict, f, ensure_ascii=False, indent=4)
@@ -62,6 +63,7 @@ class Config:
         cls.back_2_original_pos = config_dict.get("back_2_original_pos", cls.back_2_original_pos)
         cls.offset_x            = config_dict.get("offset_x", cls.offset_x)
         cls.offset_y            = config_dict.get("offset_y", cls.offset_y)
+        cls.stable_time         = config_dict.get("stable_time", cls.stable_time)
 
 
 class TemplateInfo:
@@ -114,25 +116,33 @@ class Application:
                     max_template_idx = idx
         return max_val, max_loc, max_template_idx
     
-    def _wait_until_mouse_stable(self, stable_time : float = Config.stable_time, check_interval : float = 0.5):
+    def _is_moving(self, check_interval : float = 0.5) -> bool:
+        last_pos = pyautogui.position()
+        time.sleep(check_interval)
+        current_pos = pyautogui.position()
+        return current_pos != last_pos
+    
+    def _wait_until_mouse_stable(self, check_interval : float = 0.5):
         moving = False
         while True:
-            last_pos = pyautogui.position()
-            time.sleep(check_interval)
-            current_pos = pyautogui.position()
-            if current_pos == last_pos:
+            if not self._is_moving(check_interval):
                 break
             else:
                 moving = True
                 print("⏸️  偵測到滑鼠移動，等待穩定中...")
                 timer = 0
-                while timer <= stable_time:
+                while timer <= Config.stable_time:
                     timer += 0.1
                     # print(f"⏸️  滑鼠穩定倒數: {stable_time - timer} 秒", end='\r')
                     if Config.screenshot_interval - timer >= 0:
-                        sys.stdout.write(f"\r⏸️  滑鼠穩定倒數: {stable_time - timer:.1f} 秒")
+                        sys.stdout.write(f"\r⏸️  滑鼠穩定倒數: {Config.stable_time - timer:.1f} 秒")
                         sys.stdout.flush()
-                    time.sleep(0.1)
+                    is_move = self._is_moving(0.1)
+                    if is_move:
+                        timer = 0
+                        sys.stdout.write(f"\r⏸️  滑鼠穩定倒數: {Config.stable_time:.1f} 秒")
+                        sys.stdout.flush()
+                        time.sleep(0.5)
                 print()
         if moving:
             print("✅ 滑鼠已穩定，繼續執行程式。")

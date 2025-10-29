@@ -37,15 +37,3 @@ def get_window_rect(hwnd : Optional[int]) -> tuple[int, int, int, int]:
     return rect
 
 
-def get_max_match_template(template_list : list[np.ndarray], screenshot_gray : np.ndarray) -> tuple[float, tuple[int, int]]:
-    max_val = 0
-    max_loc = (0, 0)
-    for template in template_list:
-        res = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
-        min_val, current_max_val, min_loc, current_max_loc = cv2.minMaxLoc(res)
-        if current_max_val > max_val:
-            max_val = current_max_val
-            max_loc = current_max_loc
-    return max_val, max_loc
-
-
