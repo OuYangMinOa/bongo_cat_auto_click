@@ -18,6 +18,8 @@ from src.logger import MyLog
 
 import sys
 
+pyautogui.FAILSAFE = False
+
 class Config: 
     target_window_title : str   = "BongoCat"
     screenshot_interval : float = 0.1          # 截圖間隔時間（秒）
